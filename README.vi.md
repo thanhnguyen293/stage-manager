@@ -13,9 +13,9 @@
 Extension cho GNOME Shell, mang tính năng **Stage Manager** của macOS lên desktop Linux.
 Nhóm cửa sổ bạn đang làm việc nằm giữa màn hình. Các nhóm khác được thu gọn thành thumbnail trực tiếp trong một dải ở cạnh trái, chỉ cần một cú click để gọi lại.
 
-![Demo Stage Manager: chuyển sân khấu, gom nhóm bằng kéo-thả, Alt+Tab](media/demo.gif)
+![Demo Stage Manager: chuyển sân khấu, gom nhóm bằng kéo-thả, chuyển cửa sổ sang stage khác khi đang kéo, Alt+Tab](media/demo.gif)
 
-*Click thumbnail để chuyển sân khấu, kéo một thumbnail vào sân khấu để gom nhóm, và Alt+Tab gọi lại cả nhóm.*
+*Click thumbnail để chuyển sân khấu, kéo một thumbnail vào sân khấu để gom nhóm, kéo cửa sổ qua một thumbnail để đổi stage rồi thả nó vào đó, và Alt+Tab gọi lại cả nhóm.*
 
 ## Tính năng
 
@@ -48,7 +48,7 @@ Nhóm cửa sổ bạn đang làm việc nằm giữa màn hình. Các nhóm kh�
 
 Cửa sổ mở từ app đang ở trên sân khấu (ví dụ bấm Ctrl+N) sẽ vào luôn sân khấu. Cửa sổ của app khác tự tạo nhóm riêng. Lúc mới bật Stage Manager, các cửa sổ của cùng một app được gom chung một nhóm, giống chế độ mặc định "All at Once" của macOS.
 
-![Text Editor và Characters cùng ở trên sân khấu; Fonts và nhóm Clocks + Calculator được cất ở dải bên trái](media/screenshot.png)
+![Calculator và Characters cùng ở trên sân khấu; nhóm Text Editor + Clocks và Fonts được cất ở dải bên trái](media/screenshot.png)
 
 ## Yêu cầu
 

@@ -13,9 +13,9 @@
 A GNOME Shell extension that brings macOS-style **Stage Manager** to the Linux desktop.
 The window group you are working with stays in the middle of the screen. Every other group is parked as a live thumbnail in a strip on the left edge, one click away.
 
-![Stage Manager demo: switching stages, grouping by drag and drop, Alt+Tab](media/demo.gif)
+![Stage Manager demo: switching stages, grouping by drag and drop, moving a window to another stage mid-drag, Alt+Tab](media/demo.gif)
 
-*Click a thumbnail to switch stages, drag one onto the stage to group it, and Alt+Tab brings the whole group back.*
+*Click a thumbnail to switch stages, drag one onto the stage to group it, drag a window over a thumbnail to switch stages and drop it there, and Alt+Tab brings a whole group back.*
 
 ## Features
 
@@ -48,7 +48,7 @@ The window group you are working with stays in the middle of the screen. Every o
 
 A window you opened from the app that is on stage (for example with Ctrl+N) joins the stage. A window from any other app starts a group of its own. When Stage Manager is first turned on, the windows of each app start out in one group, like the "All at Once" default on macOS.
 
-![Text Editor and Characters share the stage; Fonts and a Clocks + Calculator group are parked on the left](media/screenshot.png)
+![Calculator and Characters share the stage; a Text Editor + Clocks group and Fonts are parked on the left](media/screenshot.png)
 
 ## Requirements
 
