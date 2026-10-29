@@ -17,9 +17,7 @@ const ITEM_PADDING = 8;
 const ITEM_SPACING = 14;
 const EDGE_MARGIN = 10;
 const MAX_ITEMS = 6;
-const MAX_STACKED_WINDOWS = 3;
-const STACK_OFFSET_X = 10;
-const STACK_OFFSET_Y = 8;
+const MAX_PREVIEW_WINDOWS = 6;
 const ICON_SIZE = 28;
 const TILT_DEGREES = -10;
 const ANIMATION_MS = 220;
@@ -46,9 +44,10 @@ function rectFromActor(actor) {
  * stage window overlaps it and peeks back when the pointer hits the edge.
  */
 export class Sidebar {
-    constructor({onActivate, onMerge, onSplit, onDragSwitch, onDragCycle}) {
+    constructor({onActivate, onMerge, onMoveWindow, onSplit, onDragSwitch, onDragCycle}) {
         this._onActivate = onActivate;
         this._onMerge = onMerge;
+        this._onMoveWindow = onMoveWindow;
         this._onSplit = onSplit;
         this._onDragSwitch = onDragSwitch;
         this._onDragCycle = onDragCycle;
@@ -391,22 +390,8 @@ export class Sidebar {
         });
         button.set_child(content);
 
-        const windows = group.windows.slice(0, MAX_STACKED_WINDOWS);
-        const depth = windows.length - 1;
-        const maxW = THUMB_WIDTH - depth * STACK_OFFSET_X;
-        const maxH = THUMB_HEIGHT - depth * STACK_OFFSET_Y;
-        // Paint back to front: the most recently used window ends up on top.
-        windows.forEach((w, i) => {
-            const preview = this._createPreview(w, maxW, maxH);
-            if (!preview)
-                return;
-            preview.set_position(
-                i * STACK_OFFSET_X + Math.round((maxW - preview.width) / 2),
-                (depth - i) * STACK_OFFSET_Y + Math.round((maxH - preview.height) / 2));
-            if (i > 0)
-                preview.opacity = 200;
-            content.insert_child_at_index(preview, 0);
-        });
+        // Topmost first, for hit-testing which window a drag starts on.
+        const previews = this._layoutPreviews(content, group.windows);
 
         const icons = new St.BoxLayout({style_class: 'stage-manager-icons'});
         for (const app of group.apps.slice(0, 3))
@@ -435,21 +420,47 @@ export class Sidebar {
                 this._onActivate(group, rectFromActor(button));
         });
 
-        // Dragging a thumbnail onto the stage adds it to the current group.
+        // Dragging from a thumbnail picks up only the window that was
+        // pressed and moves it onto the stage; a click still brings the
+        // whole group back.
+        let pressPoint = null;
+        let dragged = null;
+        button.connect('button-press-event', (_actor, event) => {
+            pressPoint = event.get_coords();
+            return Clutter.EVENT_PROPAGATE;
+        });
+        const pickPreview = () => {
+            const [x, y] = pressPoint ?? global.get_pointer();
+            return previews.find(({actor}) => {
+                const r = rectFromActor(actor);
+                return x >= r.x && x < r.x + r.width && y >= r.y && y < r.y + r.height;
+            }) ?? previews[0];
+        };
         button._delegate = {
-            getDragActor: () => new Clutter.Clone({source: content}),
-            getDragActorSource: () => content,
+            getDragActor: () => {
+                dragged = pickPreview();
+                return new Clutter.Clone({source: dragged?.actor ?? content});
+            },
+            getDragActorSource: () => dragged?.actor ?? content,
         };
         const draggable = DND.makeDraggable(button, {dragActorOpacity: 220});
-        draggable.connect('drag-begin', () => this._showDropZone(group));
-        draggable.connect('drag-end', () => this._hideDropZone());
+        draggable.connect('drag-begin', () => this._showDropZone(() => {
+            if (dragged)
+                this._onMoveWindow(dragged.window);
+            else
+                this._onMerge(group);
+        }));
+        draggable.connect('drag-end', () => {
+            this._hideDropZone();
+            dragged = null;
+        });
 
         return button;
     }
 
     // The stage itself has no actor to drop on, so cover it with a
     // transparent target for the duration of the drag.
-    _showDropZone(group) {
+    _showDropZone(onDrop) {
         const area = this._workArea();
         this._dropZone = new St.Widget({
             style_class: 'stage-manager-drop-zone',
@@ -461,7 +472,7 @@ export class Sidebar {
         this._dropZone._delegate = {
             handleDragOver: () => DND.DragMotionResult.MOVE_DROP,
             acceptDrop: () => {
-                this._onMerge(group);
+                onDrop();
                 return true;
             },
         };
@@ -476,6 +487,40 @@ export class Sidebar {
             this._pendingGroups = null;
             this.setGroups(groups);
         }
+    }
+
+    // Lays the group's windows out the way they sit on screen, scaled down
+    // together, rather than stacking them: side-by-side windows stay side by
+    // side. Returns [{actor, window}] topmost first.
+    _layoutPreviews(content, groupWindows) {
+        const windows = groupWindows.slice(0, MAX_PREVIEW_WINDOWS)
+            .filter(w => w.get_frame_rect().width > 0 && w.get_frame_rect().height > 0);
+        if (windows.length === 0)
+            return [];
+        const frames = windows.map(w => w.get_frame_rect());
+        const left = Math.min(...frames.map(f => f.x));
+        const top = Math.min(...frames.map(f => f.y));
+        const width = Math.max(...frames.map(f => f.x + f.width)) - left;
+        const height = Math.max(...frames.map(f => f.y + f.height)) - top;
+        const scale = Math.min(THUMB_WIDTH / width, THUMB_HEIGHT / height);
+        const offsetX = Math.round((THUMB_WIDTH - width * scale) / 2);
+        const offsetY = Math.round((THUMB_HEIGHT - height * scale) / 2);
+
+        const previews = [];
+        // group.windows is most recently used first; paint it last so it
+        // ends up on top, as on screen.
+        windows.forEach((w, i) => {
+            const f = frames[i];
+            const actor = this._createPreview(w, f.width * scale, f.height * scale);
+            if (!actor)
+                return;
+            actor.set_position(
+                offsetX + Math.round((f.x - left) * scale),
+                offsetY + Math.round((f.y - top) * scale));
+            content.insert_child_at_index(actor, 0);
+            previews.push({actor, window: w});
+        });
+        return previews;
     }
 
     _createPreview(w, maxW, maxH) {

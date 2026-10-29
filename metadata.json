@@ -1,13 +1,13 @@
 {
   "uuid": "stage-manager@local",
   "name": "Stage Manager",
-  "description": "macOS-style Stage Manager: keeps the active window group on stage and parks the other groups as live thumbnails on the left.\n\nGroups are made of windows, not apps. Click a thumbnail to bring it on stage. Drag a thumbnail onto the stage (or Shift/Ctrl+click it) to add its windows to the current group; drag a window onto another stage's thumbnail to move it there, or onto an empty part of the strip to give it its own stage (the strip appears while dragging, even with previews off). While dragging a window, hover a thumbnail or tap Alt to switch stages, then drop it there. Middle-click splits a group. The strip hides while a window is close to it and comes back when the pointer touches the left edge; previews can be turned off and desktop icons hidden from Quick Settings. Toggle Stage Manager with Super+Ctrl+S.",
+  "description": "macOS-style Stage Manager: keeps the active window group on stage and parks the other groups as live thumbnails on the left.\n\nGroups are made of windows, not apps. Click a thumbnail to bring it on stage. Thumbnails keep the windows' on-screen layout. Drag one window out of a thumbnail onto the stage to add just that window (Shift/Ctrl+click adds the whole group); drag a window onto another stage's thumbnail to move it there, or onto an empty part of the strip to give it its own stage (the strip appears while dragging, even with previews off). While dragging a window, hover a thumbnail or tap Alt to switch stages, then drop it there. Middle-click splits a group. The strip hides while a window is close to it and comes back when the pointer touches the left edge; previews can be turned off and desktop icons hidden from Quick Settings. Toggle Stage Manager with Super+Ctrl+S.",
   "shell-version": [
     "46"
   ],
   "settings-schema": "org.gnome.shell.extensions.stage-manager",
   "gettext-domain": "stage-manager",
-  "version-name": "1.8",
+  "version-name": "1.9",
   "session-modes": [
     "user",
     "unlock-dialog"

@@ -69,6 +69,7 @@ export class StageManager {
         this._sidebar = new Sidebar({
             onActivate: (group, rect) => this._activateGroup(group, rect),
             onMerge: group => this._mergeIntoStage(group),
+            onMoveWindow: w => this._moveWindowToStage(w),
             onSplit: group => this._splitGroup(group),
             onDragSwitch: group => {
                 this._dragCycle = null;
@@ -393,6 +394,15 @@ export class StageManager {
             group.windows.forEach(w => this._groupOf.set(w, stageId));
         }
         this._activateGroup(group);
+    }
+
+    // A single window dragged out of a thumbnail joins the stage on its own;
+    // the rest of its group stays parked.
+    _moveWindowToStage(w) {
+        const focused = this._focusedStageWindow();
+        this._groupOf.set(w, focused ? this._groupIdOf(focused) : this._nextGroupId++);
+        this._unpark(w);
+        Main.activateWindow(w);
     }
 
     _isMoveOp(op) {

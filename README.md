@@ -21,8 +21,9 @@ The window group you are working with stays in the middle of the screen. Every o
 
 - **One stage at a time.** Focusing a window by any means (click, Alt+Tab, the dock, the overview) puts its group on stage and parks the rest. Parked windows fly into the strip.
 - **Per-window groups, like macOS.** Groups are made of windows, not apps, so two windows of the same app can be in different groups.
+- **True-to-layout thumbnails.** A thumbnail shows its windows where they sit on screen, scaled down: two windows side by side stay side by side.
 - **Drag and drop grouping.**
-  - Drag a thumbnail onto the stage to add its windows to the current group.
+  - Drag a window out of a thumbnail onto the stage to add just that window to the current stage. Shift+click or Ctrl+click a thumbnail to add the whole group.
   - Drag a window onto another stage's thumbnail to move it there, or onto an empty part of the strip to give it a stage of its own. The strip appears while you drag, even with previews turned off.
 - **Out of the way.** The strip hides while a window covers it or comes close to it. Touch the left screen edge with the pointer to bring it back.
 - **Room for new windows.** Newly opened windows are placed beside the strip instead of under it. Windows you moved yourself are never moved.
@@ -36,7 +37,8 @@ The window group you are working with stays in the middle of the screen. Every o
 | Action | How |
 | --- | --- |
 | Bring a group on stage | Click its thumbnail, or focus any of its windows (Alt+Tab, dock, overview) |
-| Add a group to the current stage | Drag its thumbnail onto the stage, or **Shift+click** / **Ctrl+click** it |
+| Add one window from a thumbnail to the current stage | Press on that window inside the thumbnail and drag it onto the stage |
+| Add a whole group to the current stage | **Shift+click** / **Ctrl+click** its thumbnail |
 | Move a window to another stage | Drag the window onto that stage's thumbnail (Super+drag also works) |
 | Give a window a stage of its own | Drag the window onto an empty part of the strip |
 | Switch stages in the middle of a drag | While dragging a window, hover over a thumbnail for a moment, or **tap Alt** to cycle through stages. Drop the window anywhere to leave it in the stage on screen. |
@@ -148,6 +150,7 @@ gsettings --schemadir ~/.local/share/gnome-shell/extensions/stage-manager@local/
 | --- | --- |
 | Park windows into a strip of live thumbnails | ✅ |
 | Per-window groups, grouping by drag and drop | ✅ |
+| Thumbnails keep the windows' on-screen layout; drag a single window out of one | ✅ |
 | Move a window to another stage by dropping it on its thumbnail, also with previews off | ✅ |
 | Switch stages while dragging a window (hover a thumbnail, or tap Alt) | ✅ |
 | Whole group follows Alt+Tab, the dock and the overview | ✅ |

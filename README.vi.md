@@ -21,8 +21,9 @@ Nhóm cửa sổ bạn đang làm việc nằm giữa màn hình. Các nhóm kh�
 
 - **Mỗi lúc một sân khấu.** Khi bạn chuyển sang một cửa sổ bằng bất kỳ cách nào (click, Alt+Tab, dock, Overview), nhóm của cửa sổ đó lên sân khấu và các nhóm còn lại được cất đi. Cửa sổ bị cất bay vào dải bên trái.
 - **Nhóm theo từng cửa sổ, giống macOS.** Nhóm gồm các cửa sổ chứ không phải app, nên hai cửa sổ của cùng một app có thể nằm ở hai nhóm khác nhau.
+- **Thumbnail đúng bố cục.** Thumbnail hiển thị các cửa sổ đúng vị trí của chúng trên màn hình, chỉ thu nhỏ lại: hai cửa sổ nằm cạnh nhau thì trong thumbnail cũng nằm cạnh nhau.
 - **Gom nhóm bằng kéo-thả.**
-  - Kéo thumbnail thả vào sân khấu để thêm các cửa sổ của nó vào nhóm đang hiện.
+  - Kéo một cửa sổ ra khỏi thumbnail thả vào sân khấu để chỉ thêm đúng cửa sổ đó vào sân khấu hiện tại. Shift+click hoặc Ctrl+click vào thumbnail để thêm cả nhóm.
   - Kéo một cửa sổ thả vào thumbnail của stage khác để chuyển nó sang đó, hoặc thả vào chỗ trống trên dải để nó thành một stage riêng. Dải hiện ra trong lúc kéo, kể cả khi đã tắt preview.
 - **Không vướng víu.** Dải tự ẩn khi có cửa sổ đè lên hoặc nằm sát nó. Đưa chuột chạm cạnh trái màn hình để dải hiện lại.
 - **Chừa chỗ cho cửa sổ mới.** Cửa sổ vừa mở được đặt cạnh dải thay vì nằm đè lên. Cửa sổ bạn tự kéo đi đâu thì nằm yên ở đó.
@@ -36,7 +37,8 @@ Nhóm cửa sổ bạn đang làm việc nằm giữa màn hình. Các nhóm kh�
 | Thao tác | Cách làm |
 | --- | --- |
 | Đưa một nhóm lên sân khấu | Click thumbnail của nó, hoặc chuyển sang một cửa sổ bất kỳ trong nhóm (Alt+Tab, dock, Overview) |
-| Thêm một nhóm vào sân khấu hiện tại | Kéo thumbnail thả vào sân khấu, hoặc **Shift+click** / **Ctrl+click** vào nó |
+| Thêm một cửa sổ từ thumbnail vào sân khấu hiện tại | Nhấn vào đúng cửa sổ đó trong thumbnail rồi kéo thả vào sân khấu |
+| Thêm cả nhóm vào sân khấu hiện tại | **Shift+click** / **Ctrl+click** vào thumbnail của nhóm |
 | Chuyển một cửa sổ sang stage khác | Kéo cửa sổ thả vào thumbnail của stage đó (Super+kéo cũng được) |
 | Tách một cửa sổ thành stage riêng | Kéo cửa sổ thả vào chỗ trống trên dải |
 | Chuyển stage trong lúc đang kéo | Khi đang kéo cửa sổ, giữ chuột trên một thumbnail một lúc, hoặc **gõ phím Alt** để lần lượt chuyển qua các stage. Thả cửa sổ ở bất kỳ đâu để nó ở lại stage đang hiện. |
@@ -148,6 +150,7 @@ gsettings --schemadir ~/.local/share/gnome-shell/extensions/stage-manager@local/
 | --- | --- |
 | Cất cửa sổ vào dải thumbnail trực tiếp | ✅ |
 | Nhóm theo từng cửa sổ, gom nhóm bằng kéo-thả | ✅ |
+| Thumbnail giữ đúng bố cục cửa sổ trên màn hình; kéo riêng một cửa sổ ra khỏi thumbnail | ✅ |
 | Chuyển cửa sổ sang stage khác bằng cách thả vào thumbnail, kể cả khi tắt preview | ✅ |
 | Chuyển stage trong lúc kéo cửa sổ (giữ chuột trên thumbnail, hoặc gõ Alt) | ✅ |
 | Cả nhóm hiện lại khi dùng Alt+Tab, dock hoặc Overview | ✅ |
