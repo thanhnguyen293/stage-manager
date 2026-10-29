@@ -24,9 +24,14 @@ const ICON_SIZE = 28;
 const TILT_DEGREES = -10;
 const ANIMATION_MS = 220;
 const PEEK_GRACE_MS = 1000;
-// Window drags are grabbed by Mutter, so the shell gets no hover events and
-// has to poll the pointer to highlight the thumbnail under it.
-const DRAG_POLL_MS = 80;
+// Window drags are grabbed by Mutter, so the shell gets no hover or key
+// events and has to poll the pointer (position and modifiers) instead.
+const DRAG_POLL_MS = 40;
+// Hovering a thumbnail this long while dragging a window switches to it.
+const SPRING_MS = 700;
+// After a switch the thumbnails reshuffle under the pointer; it has to move
+// this far before hovering can switch again.
+const SPRING_REARM_PX = 24;
 // A window this close to the sidebar's right edge counts as covering it.
 const NEAR_MARGIN = 40;
 
@@ -41,10 +46,12 @@ function rectFromActor(actor) {
  * stage window overlaps it and peeks back when the pointer hits the edge.
  */
 export class Sidebar {
-    constructor({onActivate, onMerge, onSplit}) {
+    constructor({onActivate, onMerge, onSplit, onDragSwitch, onDragCycle}) {
         this._onActivate = onActivate;
         this._onMerge = onMerge;
         this._onSplit = onSplit;
+        this._onDragSwitch = onDragSwitch;
+        this._onDragCycle = onDragCycle;
         this._groupCount = 0;
         this._items = []; // [{button, group}] in display order
         this._placeholder = null;
@@ -137,9 +144,15 @@ export class Sidebar {
         this._setDragTarget(null);
         if (dragging) {
             this._box.add_style_pseudo_class('drop');
+            const [, , mods] = global.get_pointer();
+            const drag = {
+                hovered: null,
+                hoverStart: 0,
+                rearmAt: null,
+                altDown: !!(mods & Clutter.ModifierType.MOD1_MASK),
+            };
             this._dragPollId = GLib.timeout_add(GLib.PRIORITY_DEFAULT, DRAG_POLL_MS, () => {
-                const [x, y] = global.get_pointer();
-                this._setDragTarget(this._itemAt(x, y)?.button ?? null);
+                this._pollWindowDrag(drag);
                 return GLib.SOURCE_CONTINUE;
             });
         } else {
@@ -147,6 +160,41 @@ export class Sidebar {
         }
         this._syncPlaceholder();
         this._sync();
+    }
+
+    // Real Alt+Tab cannot work here: Mutter skips keybindings while a
+    // window is dragged and swallows every key but Escape. The Alt modifier
+    // state is still visible, so each Alt tap cycles stages instead, and
+    // hovering a thumbnail switches to that stage (macOS spring-loading).
+    _pollWindowDrag(drag) {
+        const [x, y, mods] = global.get_pointer();
+
+        const altDown = !!(mods & Clutter.ModifierType.MOD1_MASK);
+        if (altDown && !drag.altDown)
+            this._onDragCycle();
+        drag.altDown = altDown;
+
+        if (drag.rearmAt) {
+            const [rx, ry] = drag.rearmAt;
+            if (Math.hypot(x - rx, y - ry) < SPRING_REARM_PX) {
+                this._setDragTarget(null);
+                return;
+            }
+            drag.rearmAt = null;
+        }
+
+        const item = this._itemAt(x, y);
+        this._setDragTarget(item?.button ?? null);
+        const now = GLib.get_monotonic_time() / 1000;
+        if (item?.group.id !== drag.hovered) {
+            drag.hovered = item?.group.id ?? null;
+            drag.hoverStart = now;
+        } else if (item && now - drag.hoverStart >= SPRING_MS) {
+            drag.hovered = null;
+            drag.rearmAt = [x, y];
+            this._setDragTarget(null);
+            this._onDragSwitch(item.group);
+        }
     }
 
     containsPoint(x, y) {

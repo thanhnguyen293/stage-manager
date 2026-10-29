@@ -39,6 +39,7 @@ Nhóm cửa sổ bạn đang làm việc nằm giữa màn hình. Các nhóm kh�
 | Thêm một nhóm vào sân khấu hiện tại | Kéo thumbnail thả vào sân khấu, hoặc **Shift+click** / **Ctrl+click** vào nó |
 | Chuyển một cửa sổ sang stage khác | Kéo cửa sổ thả vào thumbnail của stage đó (Super+kéo cũng được) |
 | Tách một cửa sổ thành stage riêng | Kéo cửa sổ thả vào chỗ trống trên dải |
+| Chuyển stage trong lúc đang kéo | Khi đang kéo cửa sổ, giữ chuột trên một thumbnail một lúc, hoặc **gõ phím Alt** để lần lượt chuyển qua các stage. Thả cửa sổ ở bất kỳ đâu để nó ở lại stage đang hiện. |
 | Tách một nhóm thành từng cửa sổ | **Click chuột giữa** vào thumbnail |
 | Hiện dải khi đang bị ẩn | Đưa chuột chạm cạnh trái màn hình |
 | Bật/tắt Stage Manager | **Super+Ctrl+S**, hoặc nút *Stage Manager* trong Quick Settings |
@@ -127,6 +128,7 @@ gsettings --schemadir ~/.local/share/gnome-shell/extensions/stage-manager@local/
 
 - Chỉ quản lý cửa sổ trên màn hình chính. Cửa sổ ở màn hình khác, cửa sổ ghim trên mọi workspace và cửa sổ luôn ở trên cùng (như picture-in-picture) được giữ nguyên.
 - Thông tin nhóm chỉ lưu trong bộ nhớ. Sau khi đăng xuất, hoặc tắt rồi bật lại Stage Manager, các cửa sổ được gom lại theo app.
+- Không dùng được Alt+Tab trong lúc đang kéo cửa sổ, vì Mutter bỏ qua mọi phím tắt khi đang kéo. Thay vào đó chỉ cần gõ riêng phím Alt (xem mục Cách dùng).
 - Thumbnail lấy từ khung hình cuối cùng của cửa sổ. Nhiều app ngừng vẽ khi bị thu nhỏ, nên thumbnail có thể không cập nhật liên tục.
 
 ## Cấu trúc dự án
@@ -147,6 +149,7 @@ gsettings --schemadir ~/.local/share/gnome-shell/extensions/stage-manager@local/
 | Cất cửa sổ vào dải thumbnail trực tiếp | ✅ |
 | Nhóm theo từng cửa sổ, gom nhóm bằng kéo-thả | ✅ |
 | Chuyển cửa sổ sang stage khác bằng cách thả vào thumbnail, kể cả khi tắt preview | ✅ |
+| Chuyển stage trong lúc kéo cửa sổ (giữ chuột trên thumbnail, hoặc gõ Alt) | ✅ |
 | Cả nhóm hiện lại khi dùng Alt+Tab, dock hoặc Overview | ✅ |
 | Hiệu ứng thu nhỏ bay vào dải | ✅ |
 | Dải tự ẩn khi có cửa sổ gần, hiện khi chạm cạnh màn hình | ✅ |

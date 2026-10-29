@@ -39,6 +39,7 @@ The window group you are working with stays in the middle of the screen. Every o
 | Add a group to the current stage | Drag its thumbnail onto the stage, or **Shift+click** / **Ctrl+click** it |
 | Move a window to another stage | Drag the window onto that stage's thumbnail (Super+drag also works) |
 | Give a window a stage of its own | Drag the window onto an empty part of the strip |
+| Switch stages in the middle of a drag | While dragging a window, hover over a thumbnail for a moment, or **tap Alt** to cycle through stages. Drop the window anywhere to leave it in the stage on screen. |
 | Split a group into single windows | **Middle-click** its thumbnail |
 | Show the strip while it is hidden | Push the pointer against the left screen edge |
 | Turn Stage Manager on/off | **Super+Ctrl+S**, or the *Stage Manager* toggle in Quick Settings |
@@ -127,6 +128,7 @@ gsettings --schemadir ~/.local/share/gnome-shell/extensions/stage-manager@local/
 
 - Only windows on the primary monitor are managed. Windows on other monitors, windows shown on all workspaces, and always-on-top windows such as picture-in-picture are left alone.
 - Groups are kept in memory. After logging out, or turning Stage Manager off and on again, windows are grouped by app again.
+- Alt+Tab itself does not work while a window is being dragged: Mutter ignores keyboard shortcuts during a drag. Tap Alt alone instead (see Usage).
 - Thumbnails come from the windows' last drawn frame. Many apps stop redrawing while minimized, so a thumbnail may not update live.
 
 ## Project layout
@@ -147,6 +149,7 @@ gsettings --schemadir ~/.local/share/gnome-shell/extensions/stage-manager@local/
 | Park windows into a strip of live thumbnails | ✅ |
 | Per-window groups, grouping by drag and drop | ✅ |
 | Move a window to another stage by dropping it on its thumbnail, also with previews off | ✅ |
+| Switch stages while dragging a window (hover a thumbnail, or tap Alt) | ✅ |
 | Whole group follows Alt+Tab, the dock and the overview | ✅ |
 | Minimize animation into the strip | ✅ |
 | Strip auto-hides near windows, peeks at the screen edge | ✅ |

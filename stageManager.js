@@ -58,6 +58,10 @@ export class StageManager {
         this._parkedAt = new Map();
         this._parkSeq = 0;
         this._windowSignals = new Map();
+        // The window being dragged, and the Alt-tap cycle through stages
+        // during that drag ({ids, index}).
+        this._dragWindow = null;
+        this._dragCycle = null;
         this._signals = [];
         this._focusIdleId = 0;
         this._refreshIdleId = 0;
@@ -66,6 +70,11 @@ export class StageManager {
             onActivate: (group, rect) => this._activateGroup(group, rect),
             onMerge: group => this._mergeIntoStage(group),
             onSplit: group => this._splitGroup(group),
+            onDragSwitch: group => {
+                this._dragCycle = null;
+                this._switchStageWhileDragging(group.id);
+            },
+            onDragCycle: () => this._cycleStageWhileDragging(),
         });
         this._sidebar.setEnabled(settings.get_boolean('show-previews'));
         this._connect(settings, 'changed::hide-desktop-icons', () => this._refresh());
@@ -84,8 +93,11 @@ export class StageManager {
         this._connect(global.display, 'restacked', () => this._sidebar.updateVisibility(this._stageWindows()));
         this._connect(global.workspace_manager, 'active-workspace-changed', () => this._queueRefresh());
         this._connect(global.display, 'grab-op-begin', (_d, w, op) => {
-            if (this._isMoveOp(op) && this._isCandidate(w))
+            if (this._isMoveOp(op) && this._isCandidate(w)) {
+                this._dragWindow = w;
+                this._dragCycle = null;
                 this._sidebar.setWindowDragging(true);
+            }
         });
         this._connect(global.display, 'grab-op-end', (_d, w, op) => this._onGrabEnd(w, op));
         this._connect(Main.overview, 'showing', () => this._sidebar.setInOverview(true));
@@ -398,6 +410,8 @@ export class StageManager {
         const onSidebar = this._sidebar.containsPoint(x, y);
         const target = this._sidebar.groupAt(x, y);
         this._sidebar.setWindowDragging(false);
+        this._dragWindow = null;
+        this._dragCycle = null;
         if (!w || !this._isCandidate(w) || !onSidebar)
             return;
 
@@ -410,6 +424,49 @@ export class StageManager {
         this._groupOf.set(w, id);
         this._parkedAt.set(id, ++this._parkSeq);
         this._park(w, this._sidebar.slotRect(0));
+    }
+
+    // Brings another stage on screen in the middle of a window drag. The
+    // dragged window moves into that stage right away, so dropping it
+    // anywhere on screen leaves it there.
+    _switchStageWhileDragging(groupId) {
+        const dragged = this._dragWindow;
+        if (!dragged)
+            return;
+        this._groupOf.set(dragged, groupId);
+        const target = this._sidebar.slotRect(0);
+        for (const w of this._candidateWindows()) {
+            if (w === dragged)
+                continue;
+            const id = this._groupIdOf(w);
+            if (id === groupId) {
+                if (this._parked.has(w))
+                    this._unpark(w);
+            } else if (!this._isParked(w)) {
+                this._parkedAt.set(id, ++this._parkSeq);
+                this._park(w, target);
+            }
+        }
+        dragged.raise();
+        this._refresh();
+    }
+
+    // Each Alt tap during a drag moves on to the next stage: first the ones
+    // in the sidebar, in order, then back to where the drag started.
+    _cycleStageWhileDragging() {
+        if (!this._dragWindow)
+            return;
+        if (!this._dragCycle) {
+            this._dragCycle = {
+                ids: [this._groupIdOf(this._dragWindow), ...this._parkedGroups().map(g => g.id)],
+                index: 0,
+            };
+        }
+        const {ids} = this._dragCycle;
+        if (ids.length < 2)
+            return;
+        this._dragCycle.index = (this._dragCycle.index + 1) % ids.length;
+        this._switchStageWhileDragging(ids[this._dragCycle.index]);
     }
 
     _splitGroup(group) {
