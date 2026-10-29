@@ -9,6 +9,10 @@
       <default>true</default>
       <summary>Show the sidebar with thumbnails of parked windows</summary>
     </key>
+    <key name="auto-hide-previews" type="b">
+      <default>false</default>
+      <summary>Keep the sidebar hidden until the pointer touches the left screen edge</summary>
+    </key>
     <key name="hide-desktop-icons" type="b">
       <default>false</default>
       <summary>Hide desktop icons while windows are on stage</summary>

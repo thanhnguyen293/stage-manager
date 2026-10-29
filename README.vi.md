@@ -13,9 +13,9 @@
 Extension cho GNOME Shell, mang tính năng **Stage Manager** của macOS lên desktop Linux.
 Nhóm cửa sổ bạn đang làm việc nằm giữa màn hình. Các nhóm khác được thu gọn thành thumbnail trực tiếp trong một dải ở cạnh trái, chỉ cần một cú click để gọi lại.
 
-![Demo Stage Manager: chuyển sân khấu, gom nhóm bằng kéo-thả, chuyển cửa sổ sang stage khác khi đang kéo, Alt+Tab](media/demo.gif)
+![Demo Stage Manager: nhóm cửa sổ nằm cạnh nhau, kéo một cửa sổ ra khỏi thumbnail, chuyển cửa sổ sang stage khác khi đang kéo, Alt+Tab](media/demo.gif)
 
-*Click thumbnail để chuyển sân khấu, kéo một thumbnail vào sân khấu để gom nhóm, kéo cửa sổ qua một thumbnail để đổi stage rồi thả nó vào đó, và Alt+Tab gọi lại cả nhóm.*
+*Thumbnail giữ nguyên bố cục cửa sổ nằm cạnh nhau và gọi chúng về đúng như vậy. Kéo một cửa sổ ra khỏi thumbnail để chỉ thêm cửa sổ đó, kéo cửa sổ qua một thumbnail để đổi stage rồi thả nó vào đó, và Alt+Tab để chuyển stage.*
 
 ## Tính năng
 
@@ -26,6 +26,7 @@ Nhóm cửa sổ bạn đang làm việc nằm giữa màn hình. Các nhóm kh�
   - Kéo một cửa sổ ra khỏi thumbnail thả vào sân khấu để chỉ thêm đúng cửa sổ đó vào sân khấu hiện tại. Shift+click hoặc Ctrl+click vào thumbnail để thêm cả nhóm.
   - Kéo một cửa sổ thả vào thumbnail của stage khác để chuyển nó sang đó, hoặc thả vào chỗ trống trên dải để nó thành một stage riêng. Dải hiện ra trong lúc kéo, kể cả khi đã tắt preview.
 - **Không vướng víu.** Dải tự ẩn khi có cửa sổ đè lên hoặc nằm sát nó. Đưa chuột chạm cạnh trái màn hình để dải hiện lại.
+- **Tự ẩn (tùy chọn).** Luôn ẩn dải, giống dock tự ẩn: dải chỉ hiện khi chuột chạm cạnh trái màn hình hoặc khi bạn đang kéo cửa sổ.
 - **Chừa chỗ cho cửa sổ mới.** Cửa sổ vừa mở được đặt cạnh dải thay vì nằm đè lên. Cửa sổ bạn tự kéo đi đâu thì nằm yên ở đó.
 - **Ẩn icon desktop (tùy chọn).** Ẩn các icon trên desktop khi có cửa sổ trên sân khấu, giống macOS. Icon hiện lại khi sân khấu trống.
 - **Có thể tắt preview.** Tắt dải thumbnail, chỉ giữ lại việc cất cửa sổ theo nhóm, ngay trong Quick Settings hoặc trang cài đặt của extension.
@@ -46,6 +47,7 @@ Nhóm cửa sổ bạn đang làm việc nằm giữa màn hình. Các nhóm kh�
 | Hiện dải khi đang bị ẩn | Đưa chuột chạm cạnh trái màn hình |
 | Bật/tắt Stage Manager | **Super+Ctrl+S**, hoặc nút *Stage Manager* trong Quick Settings |
 | Bật/tắt preview | Quick Settings → mũi tên cạnh *Stage Manager* → *Show previews* |
+| Tự ẩn preview | Quick Settings → mũi tên cạnh *Stage Manager* → *Auto-hide previews* |
 | Ẩn icon desktop khi có cửa sổ trên sân khấu | Quick Settings → mũi tên cạnh *Stage Manager* → *Hide desktop icons* |
 
 Cửa sổ mở từ app đang ở trên sân khấu (ví dụ bấm Ctrl+N) sẽ vào luôn sân khấu. Cửa sổ của app khác tự tạo nhóm riêng. Lúc mới bật Stage Manager, các cửa sổ của cùng một app được gom chung một nhóm, giống chế độ mặc định "All at Once" của macOS.
@@ -141,7 +143,7 @@ gsettings --schemadir ~/.local/share/gnome-shell/extensions/stage-manager@local/
 | `stageManager.js` | Logic sân khấu: cửa sổ nào đang hiện, gom nhóm, cất cửa sổ |
 | `sidebar.js` | Dải thumbnail, kéo-thả, tự ẩn |
 | `prefs.js` | Cửa sổ cài đặt |
-| `schemas/` | GSettings schema (`enabled`, `show-previews`, `hide-desktop-icons`, `toggle-shortcut`) |
+| `schemas/` | GSettings schema (`enabled`, `show-previews`, `auto-hide-previews`, `hide-desktop-icons`, `toggle-shortcut`) |
 | `media/` | GIF demo và ảnh chụp dùng trong README |
 
 ## Lộ trình
@@ -160,6 +162,7 @@ gsettings --schemadir ~/.local/share/gnome-shell/extensions/stage-manager@local/
 | Trả lại mọi cửa sổ khi tắt | ✅ |
 | Cửa sổ không cho thu nhỏ (Android Emulator và thanh công cụ của nó) | ✅ |
 | Ẩn icon desktop khi có cửa sổ trên sân khấu | ✅ |
+| Tự ẩn dải cho tới khi chuột chạm cạnh màn hình | ✅ |
 | Nút trong Quick Settings, phím tắt và cửa sổ cài đặt | ✅ |
 | Hỗ trợ nhiều màn hình | ⬜ |
 | Ghi nhớ nhóm qua các lần đăng nhập | ⬜ |

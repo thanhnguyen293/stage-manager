@@ -19,6 +19,15 @@ export default class StageManagerPreferences extends ExtensionPreferences {
         settings.bind('show-previews', previews, 'active', Gio.SettingsBindFlags.DEFAULT);
         group.add(previews);
 
+        const autoHide = new Adw.SwitchRow({
+            title: _('Auto-hide previews'),
+            subtitle: _('Keep the thumbnails hidden even when no window is near them. They come out when the pointer touches the left edge, or while a window is dragged.'),
+        });
+        settings.bind('auto-hide-previews', autoHide, 'active', Gio.SettingsBindFlags.DEFAULT);
+        // Auto-hide only means something while previews are shown.
+        settings.bind('show-previews', autoHide, 'sensitive', Gio.SettingsBindFlags.GET);
+        group.add(autoHide);
+
         const desktop = new Adw.PreferencesGroup({title: _('Desktop')});
         const icons = new Adw.SwitchRow({
             title: _('Hide desktop icons'),

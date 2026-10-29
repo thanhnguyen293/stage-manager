@@ -78,6 +78,9 @@ export class StageManager {
             onDragCycle: () => this._cycleStageWhileDragging(),
         });
         this._sidebar.setEnabled(settings.get_boolean('show-previews'));
+        this._sidebar.setAutoHide(settings.get_boolean('auto-hide-previews'));
+        this._connect(settings, 'changed::auto-hide-previews',
+            () => this._sidebar.setAutoHide(settings.get_boolean('auto-hide-previews')));
         this._connect(settings, 'changed::hide-desktop-icons', () => this._refresh());
         this._connect(settings, 'changed::show-previews', () => {
             this._sidebar.setEnabled(settings.get_boolean('show-previews'));
@@ -356,7 +359,8 @@ export class StageManager {
     // Like macOS, new windows open beside the sidebar rather than under it.
     // Only new windows are nudged: ones the user placed are left alone.
     _makeRoomFor(w) {
-        if (!this._sidebar.enabled || !this._isCandidate(w) ||
+        // An auto-hidden sidebar takes no room, so there is nothing to avoid.
+        if (!this._sidebar.enabled || this._sidebar.autoHide || !this._isCandidate(w) ||
             w.get_maximized() || w.is_fullscreen())
             return;
         const area = Main.layoutManager.getWorkAreaForMonitor(Main.layoutManager.primaryIndex);

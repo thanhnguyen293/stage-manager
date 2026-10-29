@@ -65,6 +65,7 @@ export class Sidebar {
         this._dropZone = null;
         this._pendingGroups = null;
         this._enabled = true;
+        this._autoHide = false;
 
         this._box = new St.BoxLayout({
             style_class: 'stage-manager-sidebar',
@@ -110,6 +111,17 @@ export class Sidebar {
 
     get reservedWidth() {
         return EDGE_MARGIN * 2 + THUMB_WIDTH + ITEM_PADDING * 2;
+    }
+
+    get autoHide() {
+        return this._autoHide;
+    }
+
+    // Auto-hide keeps the sidebar out of sight even when no window is near
+    // it; it only comes out at the screen edge or during a window drag.
+    setAutoHide(autoHide) {
+        this._autoHide = autoHide;
+        this._sync();
     }
 
     get enabled() {
@@ -337,8 +349,9 @@ export class Sidebar {
         if (!available)
             this._peeking = false;
         const forced = this._peeking || this._windowDragging;
-        this._edge.visible = available && this._overlapped && !forced;
-        this._animateShown(dropTarget || (available && (!this._overlapped || forced)));
+        const covered = this._overlapped || this._autoHide;
+        this._edge.visible = available && covered && !forced;
+        this._animateShown(dropTarget || (available && (!covered || forced)));
     }
 
     _animateShown(shown) {

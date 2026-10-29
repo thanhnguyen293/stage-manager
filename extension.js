@@ -25,6 +25,7 @@ class StageManagerToggle extends QuickMenuToggle {
 
         this.menu.setHeader('multitasking-symbolic', _('Stage Manager'));
         this._addSwitch(settings, 'show-previews', _('Show previews'));
+        this._addSwitch(settings, 'auto-hide-previews', _('Auto-hide previews'));
         this._addSwitch(settings, 'hide-desktop-icons', _('Hide desktop icons'));
     }
 

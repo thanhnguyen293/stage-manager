@@ -13,9 +13,9 @@
 A GNOME Shell extension that brings macOS-style **Stage Manager** to the Linux desktop.
 The window group you are working with stays in the middle of the screen. Every other group is parked as a live thumbnail in a strip on the left edge, one click away.
 
-![Stage Manager demo: switching stages, grouping by drag and drop, moving a window to another stage mid-drag, Alt+Tab](media/demo.gif)
+![Stage Manager demo: a side-by-side group, dragging one window out of a thumbnail, moving a window to another stage mid-drag, Alt+Tab](media/demo.gif)
 
-*Click a thumbnail to switch stages, drag one onto the stage to group it, drag a window over a thumbnail to switch stages and drop it there, and Alt+Tab brings a whole group back.*
+*A thumbnail keeps its windows side by side and brings them back that way. Drag one window out of a thumbnail to add just that window, drag a window over a thumbnail to switch stages and drop it there, and Alt+Tab switches stages.*
 
 ## Features
 
@@ -26,6 +26,7 @@ The window group you are working with stays in the middle of the screen. Every o
   - Drag a window out of a thumbnail onto the stage to add just that window to the current stage. Shift+click or Ctrl+click a thumbnail to add the whole group.
   - Drag a window onto another stage's thumbnail to move it there, or onto an empty part of the strip to give it a stage of its own. The strip appears while you drag, even with previews turned off.
 - **Out of the way.** The strip hides while a window covers it or comes close to it. Touch the left screen edge with the pointer to bring it back.
+- **Auto-hide (optional).** Keep the strip hidden all the time, like an auto-hiding dock: it only comes out at the left screen edge or while you drag a window.
 - **Room for new windows.** Newly opened windows are placed beside the strip instead of under it. Windows you moved yourself are never moved.
 - **Desktop icons out of sight (optional).** Hide the desktop icons while windows are on stage, like macOS. They come back when the stage is empty.
 - **Optional previews.** Turn the strip off and keep only the window parking, from Quick Settings or the extension settings.
@@ -46,6 +47,7 @@ The window group you are working with stays in the middle of the screen. Every o
 | Show the strip while it is hidden | Push the pointer against the left screen edge |
 | Turn Stage Manager on/off | **Super+Ctrl+S**, or the *Stage Manager* toggle in Quick Settings |
 | Show/hide the previews | Quick Settings → arrow next to *Stage Manager* → *Show previews* |
+| Auto-hide the previews | Quick Settings → arrow next to *Stage Manager* → *Auto-hide previews* |
 | Hide desktop icons while windows are on stage | Quick Settings → arrow next to *Stage Manager* → *Hide desktop icons* |
 
 A window you opened from the app that is on stage (for example with Ctrl+N) joins the stage. A window from any other app starts a group of its own. When Stage Manager is first turned on, the windows of each app start out in one group, like the "All at Once" default on macOS.
@@ -141,7 +143,7 @@ gsettings --schemadir ~/.local/share/gnome-shell/extensions/stage-manager@local/
 | `stageManager.js` | Stage logic: which windows are on stage, grouping, parking |
 | `sidebar.js` | The strip of thumbnails, drag and drop, auto-hide |
 | `prefs.js` | Settings window |
-| `schemas/` | GSettings schema (`enabled`, `show-previews`, `hide-desktop-icons`, `toggle-shortcut`) |
+| `schemas/` | GSettings schema (`enabled`, `show-previews`, `auto-hide-previews`, `hide-desktop-icons`, `toggle-shortcut`) |
 | `media/` | Demo GIF and screenshot used in this README |
 
 ## Roadmap
@@ -160,6 +162,7 @@ gsettings --schemadir ~/.local/share/gnome-shell/extensions/stage-manager@local/
 | Restore every window when turned off | ✅ |
 | Windows that refuse to be minimized (Android Emulator and its toolbar) | ✅ |
 | Hide desktop icons while windows are on stage | ✅ |
+| Auto-hide the strip until the pointer reaches the screen edge | ✅ |
 | Quick Settings toggle, keyboard shortcut and settings window | ✅ |
 | Multi-monitor support | ⬜ |
 | Remember groups across sessions | ⬜ |
