@@ -19,7 +19,16 @@ export default class StageManagerPreferences extends ExtensionPreferences {
         settings.bind('show-previews', previews, 'active', Gio.SettingsBindFlags.DEFAULT);
         group.add(previews);
 
+        const desktop = new Adw.PreferencesGroup({title: _('Desktop')});
+        const icons = new Adw.SwitchRow({
+            title: _('Hide desktop icons'),
+            subtitle: _('Keep the desktop clear while windows are on stage. The icons come back when no window is showing.'),
+        });
+        settings.bind('hide-desktop-icons', icons, 'active', Gio.SettingsBindFlags.DEFAULT);
+        desktop.add(icons);
+
         page.add(group);
+        page.add(desktop);
         window.add(page);
     }
 }

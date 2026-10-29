@@ -1,0 +1,16 @@
+name: Feature request
+description: Suggest an idea for Stage Manager
+labels: [enhancement]
+body:
+  - type: textarea
+    id: idea
+    attributes:
+      label: What would you like to do?
+      description: Describe the feature and the problem it solves. Tiếng Việt cũng được.
+    validations:
+      required: true
+  - type: textarea
+    id: macos
+    attributes:
+      label: How does it work on macOS?
+      description: If Stage Manager on macOS does this, describe it. Screenshots or short recordings help.

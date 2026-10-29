@@ -1,0 +1,52 @@
+name: Bug report
+description: Something does not work as expected
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the report! The details below help reproduce the problem. Tiếng Việt cũng được.
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What you did, what you expected, and what happened instead.
+    validations:
+      required: true
+  - type: input
+    id: app
+    attributes:
+      label: App involved
+      description: If it only happens with one app, which one? (e.g. Android Emulator)
+  - type: input
+    id: gnome
+    attributes:
+      label: Distribution and GNOME Shell version
+      description: Output of `gnome-shell --version`, plus your distribution (e.g. Ubuntu 24.04).
+    validations:
+      required: true
+  - type: dropdown
+    id: session
+    attributes:
+      label: Session type
+      description: Output of `echo $XDG_SESSION_TYPE`
+      options:
+        - Wayland
+        - X11
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Extension version
+      description: The `Version` line of `gnome-extensions info stage-manager@local`
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs
+      description: |
+        Output of:
+        `journalctl --user -b -o cat /usr/bin/gnome-shell | grep -iE "stage-manager|JS ERROR" | tail -50`
+      render: text

@@ -9,6 +9,17 @@ import * as Main from 'resource:///org/gnome/shell/ui/main.js';
 
 import {Sidebar} from './sidebar.js';
 
+// Key under which desktop icon windows are hidden.
+const DESKTOP_ICONS = 'desktop-icons';
+
+// Desktop icons are drawn by the "Desktop Icons NG" extension (shipped with
+// Ubuntu) in ordinary windows it tags with customJS_ding, or by apps using
+// the desktop window type.
+function isDesktopIconsWindow(w) {
+    return w.get_window_type() === Meta.WindowType.DESKTOP ||
+        (!!w.customJS_ding && !!w.get_title()?.startsWith('Desktop Icons '));
+}
+
 // Window types an app uses for tool palettes next to its main window.
 const HELPER_TYPES = [
     Meta.WindowType.UTILITY,
@@ -37,8 +48,9 @@ export class StageManager {
         this._parked = new Set();
         // Parked windows that refuse to be minimized, hidden by hand instead.
         this._hidden = new Set();
-        // Parked window -> Map(actor -> signal ids) of every actor we hid
-        // for it: its own (if hidden by hand) and its helper windows.
+        // Parked window (or DESKTOP_ICONS) -> Map(actor -> signal ids) of
+        // every actor we hid for it: a parked window's own actor (if hidden
+        // by hand) and its helper windows, or the desktop icon windows.
         this._hiddenActors = new Map();
         // groupId -> sequence number of when it last left the stage. Mutter
         // pushes minimized windows to the back of its MRU list, so the
@@ -56,6 +68,7 @@ export class StageManager {
             onSplit: group => this._splitGroup(group),
         });
         this._sidebar.setEnabled(settings.get_boolean('show-previews'));
+        this._connect(settings, 'changed::hide-desktop-icons', () => this._refresh());
         this._connect(settings, 'changed::show-previews', () => {
             this._sidebar.setEnabled(settings.get_boolean('show-previews'));
             this._refresh();
@@ -98,6 +111,7 @@ export class StageManager {
         // Like macOS: turning Stage Manager off puts every parked window back.
         for (const w of [...this._parked])
             this._unpark(w);
+        this._showActors(DESKTOP_ICONS);
 
         this._sidebar.destroy();
         this._signals = [];
@@ -277,8 +291,16 @@ export class StageManager {
     // Helper windows can also be re-created while parked; _refresh() calls
     // this again to catch them.
     _hideAttached(w) {
-        const watched = this._hiddenActors.get(w) ?? new Map();
-        for (const win of this._attachedWindows(w)) {
+        this._hideActors(w, this._attachedWindows(w));
+    }
+
+    _showAttached(w) {
+        this._showActors(w);
+    }
+
+    _hideActors(key, windows) {
+        const watched = this._hiddenActors.get(key) ?? new Map();
+        for (const win of windows) {
             const actor = win.get_compositor_private();
             if (!actor || watched.has(actor))
                 continue;
@@ -288,7 +310,7 @@ export class StageManager {
                     if (!actor.visible)
                         return;
                     global.compositor.get_laters().add(Meta.LaterType.BEFORE_REDRAW, () => {
-                        if (this._hiddenActors.get(w)?.has(actor))
+                        if (this._hiddenActors.get(key)?.has(actor))
                             actor.hide();
                         return GLib.SOURCE_REMOVE;
                     });
@@ -296,15 +318,26 @@ export class StageManager {
                 actor.connect('destroy', () => watched.delete(actor)),
             ]);
         }
-        this._hiddenActors.set(w, watched);
+        this._hiddenActors.set(key, watched);
     }
 
-    _showAttached(w) {
-        for (const [actor, ids] of this._hiddenActors.get(w) ?? []) {
+    _showActors(key) {
+        for (const [actor, ids] of this._hiddenActors.get(key) ?? []) {
             ids.forEach(id => actor.disconnect(id));
             actor.show();
         }
-        this._hiddenActors.delete(w);
+        this._hiddenActors.delete(key);
+    }
+
+    // Like macOS, desktop icons stay out of sight while something is on
+    // stage and come back once the stage is empty.
+    _syncDesktopIcons() {
+        if (this._settings.get_boolean('hide-desktop-icons') && this._stageWindows().length > 0) {
+            this._hideActors(DESKTOP_ICONS,
+                global.display.list_all_windows().filter(isDesktopIconsWindow));
+        } else {
+            this._showActors(DESKTOP_ICONS);
+        }
     }
 
     // Like macOS, new windows open beside the sidebar rather than under it.
@@ -324,6 +357,7 @@ export class StageManager {
     _refresh() {
         for (const w of this._parked)
             this._hideAttached(w);
+        this._syncDesktopIcons();
         this._sidebar.setGroups(this._parkedGroups());
         this._sidebar.updateVisibility(this._stageWindows());
     }

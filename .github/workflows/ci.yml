@@ -1,0 +1,26 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check JavaScript syntax
+        run: |
+          for f in *.js; do
+            node --input-type=module --check < "$f" || { echo "::error file=$f::syntax error"; exit 1; }
+          done
+
+      - name: Validate metadata.json
+        run: python3 -m json.tool metadata.json > /dev/null
+
+      - name: Compile settings schema
+        run: |
+          sudo apt-get install -y --no-install-recommends libglib2.0-bin
+          glib-compile-schemas --strict --dry-run schemas

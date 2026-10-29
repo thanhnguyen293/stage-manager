@@ -24,13 +24,17 @@ class StageManagerToggle extends QuickMenuToggle {
         settings.bind('enabled', this, 'checked', Gio.SettingsBindFlags.DEFAULT);
 
         this.menu.setHeader('multitasking-symbolic', _('Stage Manager'));
-        const previews = new PopupMenu.PopupSwitchMenuItem(_('Show previews'),
-            settings.get_boolean('show-previews'));
-        previews.connect('toggled', (_item, state) => settings.set_boolean('show-previews', state));
-        const changedId = settings.connect('changed::show-previews',
-            () => previews.setToggleState(settings.get_boolean('show-previews')));
+        this._addSwitch(settings, 'show-previews', _('Show previews'));
+        this._addSwitch(settings, 'hide-desktop-icons', _('Hide desktop icons'));
+    }
+
+    _addSwitch(settings, key, label) {
+        const item = new PopupMenu.PopupSwitchMenuItem(label, settings.get_boolean(key));
+        item.connect('toggled', (_item, state) => settings.set_boolean(key, state));
+        const changedId = settings.connect(`changed::${key}`,
+            () => item.setToggleState(settings.get_boolean(key)));
         this.connect('destroy', () => settings.disconnect(changedId));
-        this.menu.addMenuItem(previews);
+        this.menu.addMenuItem(item);
     }
 });
 

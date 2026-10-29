@@ -13,9 +13,9 @@
 A GNOME Shell extension that brings macOS-style **Stage Manager** to the Linux desktop.
 The window group you are working with stays in the middle of the screen. Every other group is parked as a live thumbnail in a strip on the left edge, one click away.
 
-![Stage Manager on Ubuntu 24.04](screenshot.png)
+![Stage Manager demo: switching stages, grouping by drag and drop, Alt+Tab](media/demo.gif)
 
-*Text Editor and Characters share the stage. Fonts and a Clocks + Calculator group are parked on the left.*
+*Click a thumbnail to switch stages, drag one onto the stage to group it, and Alt+Tab brings the whole group back.*
 
 ## Features
 
@@ -26,6 +26,7 @@ The window group you are working with stays in the middle of the screen. Every o
   - Drag a window onto the strip to take just that window out.
 - **Out of the way.** The strip hides while a window covers it or comes close to it. Touch the left screen edge with the pointer to bring it back.
 - **Room for new windows.** Newly opened windows are placed beside the strip instead of under it. Windows you moved yourself are never moved.
+- **Desktop icons out of sight (optional).** Hide the desktop icons while windows are on stage, like macOS. They come back when the stage is empty.
 - **Optional previews.** Turn the strip off and keep only the window parking, from Quick Settings or the extension settings.
 - **Works with stubborn windows.** Some windows refuse to be minimized, such as the Android Emulator, which removes the minimize function through `_MOTIF_WM_HINTS`. These are hidden instead, together with their tool windows (like the emulator's side toolbar), so they don't show up on every stage.
 - Turning Stage Manager off brings every parked window back.
@@ -41,8 +42,11 @@ The window group you are working with stays in the middle of the screen. Every o
 | Show the strip while it is hidden | Push the pointer against the left screen edge |
 | Turn Stage Manager on/off | **Super+Ctrl+S**, or the *Stage Manager* toggle in Quick Settings |
 | Show/hide the previews | Quick Settings → arrow next to *Stage Manager* → *Show previews* |
+| Hide desktop icons while windows are on stage | Quick Settings → arrow next to *Stage Manager* → *Hide desktop icons* |
 
 A window you opened from the app that is on stage (for example with Ctrl+N) joins the stage. A window from any other app starts a group of its own. When Stage Manager is first turned on, the windows of each app start out in one group, like the "All at Once" default on macOS.
+
+![Text Editor and Characters share the stage; Fonts and a Clocks + Calculator group are parked on the left](media/screenshot.png)
 
 ## Requirements
 
@@ -50,6 +54,16 @@ A window you opened from the app that is on stage (for example with Ctrl+N) join
 - `git` and the `gnome-extensions` tool, which ships with GNOME Shell
 
 ## Installation
+
+### From a release (easiest)
+
+Download `stage-manager@local.shell-extension.zip` from the [latest release](https://github.com/thanhnguyen293/stage-manager/releases/latest), then run:
+
+```bash
+gnome-extensions install --force stage-manager@local.shell-extension.zip
+```
+
+### From source
 
 ```bash
 git clone https://github.com/thanhnguyen293/stage-manager.git
@@ -75,6 +89,8 @@ gnome-extensions enable stage-manager@local
 You can also enable it from the **Extensions** app or **Extension Manager**.
 
 ### Updating
+
+Install the zip from the newest release the same way, or, from a source checkout:
 
 ```bash
 cd stage-manager
@@ -120,11 +136,32 @@ gsettings --schemadir ~/.local/share/gnome-shell/extensions/stage-manager@local/
 | `stageManager.js` | Stage logic: which windows are on stage, grouping, parking |
 | `sidebar.js` | The strip of thumbnails, drag and drop, auto-hide |
 | `prefs.js` | Settings window |
-| `schemas/` | GSettings schema (`enabled`, `show-previews`, `toggle-shortcut`) |
+| `schemas/` | GSettings schema (`enabled`, `show-previews`, `hide-desktop-icons`, `toggle-shortcut`) |
+| `media/` | Demo GIF and screenshot used in this README |
+
+## Roadmap
+
+| Feature | State |
+| --- | --- |
+| Park windows into a strip of live thumbnails | ✅ |
+| Per-window groups, grouping by drag and drop | ✅ |
+| Whole group follows Alt+Tab, the dock and the overview | ✅ |
+| Minimize animation into the strip | ✅ |
+| Strip auto-hides near windows, peeks at the screen edge | ✅ |
+| Separate stages per workspace | ✅ |
+| Restore every window when turned off | ✅ |
+| Windows that refuse to be minimized (Android Emulator and its toolbar) | ✅ |
+| Hide desktop icons while windows are on stage | ✅ |
+| Quick Settings toggle, keyboard shortcut and settings window | ✅ |
+| Multi-monitor support | ⬜ |
+| Remember groups across sessions | ⬜ |
+| GNOME Shell 47 and newer | ⬜ |
+| Translations of the settings and menu texts | ⬜ |
+| Publish on extensions.gnome.org | ⬜ |
 
 ## Contributing
 
-Bug reports, ideas and pull requests are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for how to report a bug, set up a development environment and open a pull request.
+Bug reports, ideas and pull requests are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for how to report a bug, set up a development environment and open a pull request. Everyone taking part is expected to follow the [Code of Conduct](CODE_OF_CONDUCT.md).
 
 ## License
 
