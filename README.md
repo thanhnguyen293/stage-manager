@@ -122,6 +122,10 @@ gsettings --schemadir ~/.local/share/gnome-shell/extensions/stage-manager@local/
 | `prefs.js` | Settings window |
 | `schemas/` | GSettings schema (`enabled`, `show-previews`, `toggle-shortcut`) |
 
+## Contributing
+
+Bug reports, ideas and pull requests are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for how to report a bug, set up a development environment and open a pull request.
+
 ## License
 
 Stage Manager for GNOME is free software, licensed under the

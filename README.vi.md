@@ -122,6 +122,10 @@ gsettings --schemadir ~/.local/share/gnome-shell/extensions/stage-manager@local/
 | `prefs.js` | Cửa sổ cài đặt |
 | `schemas/` | GSettings schema (`enabled`, `show-previews`, `toggle-shortcut`) |
 
+## Đóng góp
+
+Mọi báo lỗi, ý tưởng và pull request đều được hoan nghênh. Xem [CONTRIBUTING.vi.md](CONTRIBUTING.vi.md) để biết cách báo lỗi, chuẩn bị môi trường phát triển và mở pull request.
+
 ## Giấy phép
 
 Stage Manager cho GNOME là phần mềm tự do, phát hành theo giấy phép
