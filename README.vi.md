@@ -52,7 +52,7 @@ Nhóm cửa sổ bạn đang làm việc nằm giữa màn hình. Các nhóm kh�
 
 Cửa sổ mở từ app đang ở trên sân khấu (ví dụ bấm Ctrl+N) sẽ vào luôn sân khấu. Cửa sổ của app khác tự tạo nhóm riêng. Lúc mới bật Stage Manager, các cửa sổ của cùng một app được gom chung một nhóm, giống chế độ mặc định "All at Once" của macOS.
 
-![Calculator và Characters cùng ở trên sân khấu; nhóm Text Editor + Clocks và Fonts được cất ở dải bên trái](media/screenshot.png)
+![Text Editor và Characters nằm cạnh nhau trên sân khấu; nhóm Clocks + Calculator (thumbnail cũng hiện hai cửa sổ cạnh nhau) và Fonts được cất ở dải bên trái](media/screenshot.png)
 
 ## Yêu cầu
 

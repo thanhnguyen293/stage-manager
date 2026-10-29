@@ -52,7 +52,7 @@ The window group you are working with stays in the middle of the screen. Every o
 
 A window you opened from the app that is on stage (for example with Ctrl+N) joins the stage. A window from any other app starts a group of its own. When Stage Manager is first turned on, the windows of each app start out in one group, like the "All at Once" default on macOS.
 
-![Calculator and Characters share the stage; a Text Editor + Clocks group and Fonts are parked on the left](media/screenshot.png)
+![Text Editor and Characters share the stage side by side; a Clocks + Calculator group, shown side by side in its thumbnail, and Fonts are parked on the left](media/screenshot.png)
 
 ## Requirements
 
