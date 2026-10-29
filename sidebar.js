@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2026 Thành Nguyễn
+// SPDX-License-Identifier: GPL-2.0-or-later
+
 import Clutter from 'gi://Clutter';
 import GLib from 'gi://GLib';
 import Graphene from 'gi://Graphene';

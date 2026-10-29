@@ -112,6 +112,12 @@ gsettings --schemadir ~/.local/share/gnome-shell/extensions/stage-manager@local/
 | `prefs.js` | Settings window |
 | `schemas/` | GSettings schema (`enabled`, `show-previews`, `toggle-shortcut`) |
 
+## License
+
+Stage Manager for GNOME is free software, licensed under the
+[GNU General Public License v2.0 or later](LICENSE) (`GPL-2.0-or-later`),
+the same license as GNOME Shell.
+
 ## Tiếng Việt
 
 **Stage Manager cho GNOME** là extension đưa tính năng Stage Manager của macOS lên Ubuntu/GNOME. Nhóm cửa sổ đang dùng nằm giữa màn hình, các nhóm khác được thu gọn thành thumbnail ở cạnh trái.
@@ -140,3 +146,5 @@ gnome-extensions enable stage-manager@local
 - **Khi dải đang ẩn:** đưa chuột sát cạnh trái màn hình để dải hiện ra.
 - **Bật/tắt Stage Manager:** Super+Ctrl+S, hoặc nút trong Quick Settings.
 - **Bật/tắt preview:** mở mũi tên cạnh nút Stage Manager trong Quick Settings.
+
+**Giấy phép:** GPL-2.0-or-later, xem file [LICENSE](LICENSE).
