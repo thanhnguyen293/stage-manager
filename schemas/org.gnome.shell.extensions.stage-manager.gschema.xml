@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+  <schema id="org.gnome.shell.extensions.stage-manager" path="/org/gnome/shell/extensions/stage-manager/">
+    <key name="enabled" type="b">
+      <default>true</default>
+      <summary>Whether Stage Manager is active</summary>
+    </key>
+    <key name="show-previews" type="b">
+      <default>true</default>
+      <summary>Show the sidebar with thumbnails of parked windows</summary>
+    </key>
+    <key name="toggle-shortcut" type="as">
+      <default><![CDATA[['<Super><Control>s']]]></default>
+      <summary>Shortcut to turn Stage Manager on or off</summary>
+    </key>
+  </schema>
+</schemalist>
