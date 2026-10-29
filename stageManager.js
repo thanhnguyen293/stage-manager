@@ -387,16 +387,25 @@ export class StageManager {
         return op === Meta.GrabOp.MOVING || op === Meta.GrabOp.MOVING_UNCONSTRAINED;
     }
 
-    // Dropping a stage window on the sidebar takes it out of the stage group
-    // and parks it on its own, like dragging a window to the strip on macOS.
+    // Dropping a stage window on a thumbnail moves it into that parked
+    // stage; dropping it elsewhere on the sidebar parks it on its own. Both
+    // work like dragging a window to the strip on macOS.
     _onGrabEnd(w, op) {
         if (!this._isMoveOp(op))
             return;
-        this._sidebar.setWindowDragging(false);
+        // Look up the drop target before the sidebar starts hiding again.
         const [x, y] = global.get_pointer();
-        if (!w || !this._isCandidate(w) || !this._sidebar.containsPoint(x, y))
+        const onSidebar = this._sidebar.containsPoint(x, y);
+        const target = this._sidebar.groupAt(x, y);
+        this._sidebar.setWindowDragging(false);
+        if (!w || !this._isCandidate(w) || !onSidebar)
             return;
 
+        if (target) {
+            this._groupOf.set(w, target.group.id);
+            this._park(w, target.rect);
+            return;
+        }
         const id = this._nextGroupId++;
         this._groupOf.set(w, id);
         this._parkedAt.set(id, ++this._parkSeq);

@@ -32,3 +32,15 @@
 .stage-manager-drop-zone {
   background-color: rgba(255, 255, 255, 0.04);
 }
+
+.stage-manager-item:drop {
+  background-color: rgba(255, 255, 255, 0.25);
+}
+
+.stage-manager-placeholder {
+  border: 2px solid rgba(255, 255, 255, 0.45);
+  border-radius: 14px;
+  padding: 12px;
+  color: rgba(255, 255, 255, 0.85);
+  text-align: center;
+}

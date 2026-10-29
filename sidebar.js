@@ -9,6 +9,7 @@ import St from 'gi://St';
 
 import * as DND from 'resource:///org/gnome/shell/ui/dnd.js';
 import * as Main from 'resource:///org/gnome/shell/ui/main.js';
+import {gettext as _} from 'resource:///org/gnome/shell/extensions/extension.js';
 
 const THUMB_WIDTH = 150;
 const THUMB_HEIGHT = 100;
@@ -23,6 +24,9 @@ const ICON_SIZE = 28;
 const TILT_DEGREES = -10;
 const ANIMATION_MS = 220;
 const PEEK_GRACE_MS = 1000;
+// Window drags are grabbed by Mutter, so the shell gets no hover events and
+// has to poll the pointer to highlight the thumbnail under it.
+const DRAG_POLL_MS = 80;
 // A window this close to the sidebar's right edge counts as covering it.
 const NEAR_MARGIN = 40;
 
@@ -42,6 +46,10 @@ export class Sidebar {
         this._onMerge = onMerge;
         this._onSplit = onSplit;
         this._groupCount = 0;
+        this._items = []; // [{button, group}] in display order
+        this._placeholder = null;
+        this._dragPollId = 0;
+        this._dragTarget = null;
         this._overlapped = false;
         this._peeking = false;
         this._inOverview = Main.overview.visible;
@@ -86,6 +94,8 @@ export class Sidebar {
     destroy() {
         if (this._peekTimeoutId)
             GLib.source_remove(this._peekTimeoutId);
+        if (this._dragPollId)
+            GLib.source_remove(this._dragPollId);
         global.display.disconnect(this._fullscreenId);
         this._dropZone?.destroy();
         this._box.destroy();
@@ -115,20 +125,77 @@ export class Sidebar {
         this._sync();
     }
 
-    // While a window is dragged, the sidebar stays out so it can be dropped on.
+    // While a window is dragged, the sidebar comes out as a drop target,
+    // even with previews turned off: it is the only way to move a window to
+    // another stage.
     setWindowDragging(dragging) {
         this._windowDragging = dragging;
-        if (dragging)
+        if (this._dragPollId) {
+            GLib.source_remove(this._dragPollId);
+            this._dragPollId = 0;
+        }
+        this._setDragTarget(null);
+        if (dragging) {
             this._box.add_style_pseudo_class('drop');
-        else
+            this._dragPollId = GLib.timeout_add(GLib.PRIORITY_DEFAULT, DRAG_POLL_MS, () => {
+                const [x, y] = global.get_pointer();
+                this._setDragTarget(this._itemAt(x, y)?.button ?? null);
+                return GLib.SOURCE_CONTINUE;
+            });
+        } else {
             this._box.remove_style_pseudo_class('drop');
+        }
+        this._syncPlaceholder();
         this._sync();
     }
 
     containsPoint(x, y) {
         const area = this._workArea();
-        return this._enabled && x >= area.x && x < area.x + this.reservedWidth &&
+        return x >= area.x && x < area.x + this.reservedWidth &&
             y >= area.y && y < area.y + area.height;
+    }
+
+    // The parked group whose thumbnail is at (x, y), with that thumbnail's
+    // rectangle, or null.
+    groupAt(x, y) {
+        const item = this._itemAt(x, y);
+        return item ? {group: item.group, rect: rectFromActor(item.button)} : null;
+    }
+
+    _itemAt(x, y) {
+        if (!this._box.visible)
+            return null;
+        return this._items.find(({button}) => {
+            const r = rectFromActor(button);
+            return x >= r.x && x < r.x + r.width && y >= r.y && y < r.y + r.height;
+        }) ?? null;
+    }
+
+    _setDragTarget(button) {
+        if (this._dragTarget === button)
+            return;
+        this._dragTarget?.remove_style_pseudo_class('drop');
+        this._dragTarget = button;
+        button?.add_style_pseudo_class('drop');
+    }
+
+    // Without other stages there is no thumbnail to aim at, so show where a
+    // window can be dropped to get a stage of its own.
+    _syncPlaceholder() {
+        const wanted = this._windowDragging && this._groupCount === 0;
+        if (wanted && !this._placeholder) {
+            this._placeholder = new St.Label({
+                style_class: 'stage-manager-placeholder',
+                text: _('Drop here for a new stage'),
+                width: THUMB_WIDTH + ITEM_PADDING * 2,
+                height: THUMB_HEIGHT + ITEM_PADDING * 2,
+            });
+            this._placeholder.clutter_text.line_wrap = true;
+            this._box.add_child(this._placeholder);
+        } else if (!wanted && this._placeholder) {
+            this._placeholder.destroy();
+            this._placeholder = null;
+        }
     }
 
     setGroups(groups) {
@@ -137,11 +204,14 @@ export class Sidebar {
             this._pendingGroups = groups;
             return;
         }
+        this._setDragTarget(null);
         this._box.destroy_all_children();
+        this._placeholder = null;
         const visible = groups.slice(0, this._maxItems());
-        for (const group of visible)
-            this._box.add_child(this._createItem(group));
+        this._items = visible.map(group => ({button: this._createItem(group), group}));
+        this._items.forEach(({button}) => this._box.add_child(button));
         this._groupCount = visible.length;
+        this._syncPlaceholder();
         this._reposition();
         this._sync();
     }
@@ -214,13 +284,14 @@ export class Sidebar {
     }
 
     _sync() {
+        const dropTarget = this._windowDragging && !this._inOverview;
         const available = this._enabled && this._groupCount > 0 && !this._inOverview &&
             !global.display.get_monitor_in_fullscreen(Main.layoutManager.primaryIndex);
         if (!available)
             this._peeking = false;
         const forced = this._peeking || this._windowDragging;
         this._edge.visible = available && this._overlapped && !forced;
-        this._animateShown(available && (!this._overlapped || forced));
+        this._animateShown(dropTarget || (available && (!this._overlapped || forced)));
     }
 
     _animateShown(shown) {

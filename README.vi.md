@@ -23,7 +23,7 @@ Nhóm cửa sổ bạn đang làm việc nằm giữa màn hình. Các nhóm kh�
 - **Nhóm theo từng cửa sổ, giống macOS.** Nhóm gồm các cửa sổ chứ không phải app, nên hai cửa sổ của cùng một app có thể nằm ở hai nhóm khác nhau.
 - **Gom nhóm bằng kéo-thả.**
   - Kéo thumbnail thả vào sân khấu để thêm các cửa sổ của nó vào nhóm đang hiện.
-  - Kéo một cửa sổ thả vào dải để tách riêng cửa sổ đó ra.
+  - Kéo một cửa sổ thả vào thumbnail của stage khác để chuyển nó sang đó, hoặc thả vào chỗ trống trên dải để nó thành một stage riêng. Dải hiện ra trong lúc kéo, kể cả khi đã tắt preview.
 - **Không vướng víu.** Dải tự ẩn khi có cửa sổ đè lên hoặc nằm sát nó. Đưa chuột chạm cạnh trái màn hình để dải hiện lại.
 - **Chừa chỗ cho cửa sổ mới.** Cửa sổ vừa mở được đặt cạnh dải thay vì nằm đè lên. Cửa sổ bạn tự kéo đi đâu thì nằm yên ở đó.
 - **Ẩn icon desktop (tùy chọn).** Ẩn các icon trên desktop khi có cửa sổ trên sân khấu, giống macOS. Icon hiện lại khi sân khấu trống.
@@ -37,7 +37,8 @@ Nhóm cửa sổ bạn đang làm việc nằm giữa màn hình. Các nhóm kh�
 | --- | --- |
 | Đưa một nhóm lên sân khấu | Click thumbnail của nó, hoặc chuyển sang một cửa sổ bất kỳ trong nhóm (Alt+Tab, dock, Overview) |
 | Thêm một nhóm vào sân khấu hiện tại | Kéo thumbnail thả vào sân khấu, hoặc **Shift+click** / **Ctrl+click** vào nó |
-| Tách một cửa sổ khỏi sân khấu | Kéo cửa sổ đó thả vào dải (Super+kéo cũng được) |
+| Chuyển một cửa sổ sang stage khác | Kéo cửa sổ thả vào thumbnail của stage đó (Super+kéo cũng được) |
+| Tách một cửa sổ thành stage riêng | Kéo cửa sổ thả vào chỗ trống trên dải |
 | Tách một nhóm thành từng cửa sổ | **Click chuột giữa** vào thumbnail |
 | Hiện dải khi đang bị ẩn | Đưa chuột chạm cạnh trái màn hình |
 | Bật/tắt Stage Manager | **Super+Ctrl+S**, hoặc nút *Stage Manager* trong Quick Settings |
@@ -145,6 +146,7 @@ gsettings --schemadir ~/.local/share/gnome-shell/extensions/stage-manager@local/
 | --- | --- |
 | Cất cửa sổ vào dải thumbnail trực tiếp | ✅ |
 | Nhóm theo từng cửa sổ, gom nhóm bằng kéo-thả | ✅ |
+| Chuyển cửa sổ sang stage khác bằng cách thả vào thumbnail, kể cả khi tắt preview | ✅ |
 | Cả nhóm hiện lại khi dùng Alt+Tab, dock hoặc Overview | ✅ |
 | Hiệu ứng thu nhỏ bay vào dải | ✅ |
 | Dải tự ẩn khi có cửa sổ gần, hiện khi chạm cạnh màn hình | ✅ |

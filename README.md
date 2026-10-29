@@ -23,7 +23,7 @@ The window group you are working with stays in the middle of the screen. Every o
 - **Per-window groups, like macOS.** Groups are made of windows, not apps, so two windows of the same app can be in different groups.
 - **Drag and drop grouping.**
   - Drag a thumbnail onto the stage to add its windows to the current group.
-  - Drag a window onto the strip to take just that window out.
+  - Drag a window onto another stage's thumbnail to move it there, or onto an empty part of the strip to give it a stage of its own. The strip appears while you drag, even with previews turned off.
 - **Out of the way.** The strip hides while a window covers it or comes close to it. Touch the left screen edge with the pointer to bring it back.
 - **Room for new windows.** Newly opened windows are placed beside the strip instead of under it. Windows you moved yourself are never moved.
 - **Desktop icons out of sight (optional).** Hide the desktop icons while windows are on stage, like macOS. They come back when the stage is empty.
@@ -37,7 +37,8 @@ The window group you are working with stays in the middle of the screen. Every o
 | --- | --- |
 | Bring a group on stage | Click its thumbnail, or focus any of its windows (Alt+Tab, dock, overview) |
 | Add a group to the current stage | Drag its thumbnail onto the stage, or **Shift+click** / **Ctrl+click** it |
-| Take one window out of the stage | Drag the window onto the strip (Super+drag also works) |
+| Move a window to another stage | Drag the window onto that stage's thumbnail (Super+drag also works) |
+| Give a window a stage of its own | Drag the window onto an empty part of the strip |
 | Split a group into single windows | **Middle-click** its thumbnail |
 | Show the strip while it is hidden | Push the pointer against the left screen edge |
 | Turn Stage Manager on/off | **Super+Ctrl+S**, or the *Stage Manager* toggle in Quick Settings |
@@ -145,6 +146,7 @@ gsettings --schemadir ~/.local/share/gnome-shell/extensions/stage-manager@local/
 | --- | --- |
 | Park windows into a strip of live thumbnails | ✅ |
 | Per-window groups, grouping by drag and drop | ✅ |
+| Move a window to another stage by dropping it on its thumbnail, also with previews off | ✅ |
 | Whole group follows Alt+Tab, the dock and the overview | ✅ |
 | Minimize animation into the strip | ✅ |
 | Strip auto-hides near windows, peeks at the screen edge | ✅ |
