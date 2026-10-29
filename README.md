@@ -1,5 +1,15 @@
 # Stage Manager for GNOME
 
+**English** | [Tiếng Việt](README.vi.md)
+
+[![GNOME Shell 46](https://img.shields.io/badge/GNOME%20Shell-46-4A86CF?logo=gnome&logoColor=white)](https://www.gnome.org/)
+[![License: GPL-2.0-or-later](https://img.shields.io/github/license/thanhnguyen293/stage-manager)](LICENSE)
+[![Stars](https://img.shields.io/github/stars/thanhnguyen293/stage-manager?style=flat)](https://github.com/thanhnguyen293/stage-manager/stargazers)
+[![Forks](https://img.shields.io/github/forks/thanhnguyen293/stage-manager?style=flat)](https://github.com/thanhnguyen293/stage-manager/forks)
+[![Issues](https://img.shields.io/github/issues/thanhnguyen293/stage-manager)](https://github.com/thanhnguyen293/stage-manager/issues)
+[![Last commit](https://img.shields.io/github/last-commit/thanhnguyen293/stage-manager)](https://github.com/thanhnguyen293/stage-manager/commits/main)
+[![Views](https://hits.sh/github.com/thanhnguyen293/stage-manager.svg?label=views&color=4c1)](https://hits.sh/github.com/thanhnguyen293/stage-manager/)
+
 A GNOME Shell extension that brings macOS-style **Stage Manager** to the Linux desktop.
 The window group you are working with stays in the middle of the screen. Every other group is parked as a live thumbnail in a strip on the left edge, one click away.
 
@@ -117,34 +127,3 @@ gsettings --schemadir ~/.local/share/gnome-shell/extensions/stage-manager@local/
 Stage Manager for GNOME is free software, licensed under the
 [GNU General Public License v2.0 or later](LICENSE) (`GPL-2.0-or-later`),
 the same license as GNOME Shell.
-
-## Tiếng Việt
-
-**Stage Manager cho GNOME** là extension đưa tính năng Stage Manager của macOS lên Ubuntu/GNOME. Nhóm cửa sổ đang dùng nằm giữa màn hình, các nhóm khác được thu gọn thành thumbnail ở cạnh trái.
-
-**Cài đặt:**
-
-```bash
-git clone https://github.com/thanhnguyen293/stage-manager.git
-cd stage-manager
-gnome-extensions pack --force --extra-source=stageManager.js --extra-source=sidebar.js --extra-source=prefs.js
-gnome-extensions install --force stage-manager@local.shell-extension.zip
-```
-
-Đăng xuất rồi đăng nhập lại (bắt buộc trên Wayland), sau đó chạy:
-
-```bash
-gnome-extensions enable stage-manager@local
-```
-
-**Cách dùng nhanh:**
-
-- **Đưa một nhóm lên giữa màn hình:** click thumbnail, hoặc chuyển sang cửa sổ đó bằng Alt+Tab, dock hay Overview.
-- **Gộp vào nhóm đang hiện:** kéo thumbnail thả vào giữa màn hình, hoặc Shift/Ctrl+click.
-- **Tách một cửa sổ ra khỏi nhóm:** kéo cửa sổ đó thả vào dải bên trái.
-- **Tách cả nhóm thành từng cửa sổ:** click chuột giữa vào thumbnail.
-- **Khi dải đang ẩn:** đưa chuột sát cạnh trái màn hình để dải hiện ra.
-- **Bật/tắt Stage Manager:** Super+Ctrl+S, hoặc nút trong Quick Settings.
-- **Bật/tắt preview:** mở mũi tên cạnh nút Stage Manager trong Quick Settings.
-
-**Giấy phép:** GPL-2.0-or-later, xem file [LICENSE](LICENSE).
