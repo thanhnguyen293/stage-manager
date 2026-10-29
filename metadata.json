@@ -7,7 +7,7 @@
   ],
   "settings-schema": "org.gnome.shell.extensions.stage-manager",
   "gettext-domain": "stage-manager",
-  "version-name": "1.4",
+  "version-name": "1.5",
   "session-modes": [
     "user",
     "unlock-dialog"

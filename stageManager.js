@@ -9,6 +9,12 @@ import * as Main from 'resource:///org/gnome/shell/ui/main.js';
 
 import {Sidebar} from './sidebar.js';
 
+// Window types an app uses for tool palettes next to its main window.
+const HELPER_TYPES = [
+    Meta.WindowType.UTILITY,
+    Meta.WindowType.TOOLBAR,
+];
+
 /**
  * Keeps one group of windows "on stage" per workspace (primary monitor only)
  * and minimizes the rest, which the sidebar shows as live thumbnails.
@@ -29,9 +35,11 @@ export class StageManager {
         this._nextGroupId = 0;
         // Windows we parked, so turning Stage Manager off can restore them.
         this._parked = new Set();
-        // Parked windows that refuse to be minimized, hidden by hand instead:
-        // MetaWindow -> [[actor, notify::visible handler id], ...].
-        this._hidden = new Map();
+        // Parked windows that refuse to be minimized, hidden by hand instead.
+        this._hidden = new Set();
+        // Parked window -> Map(actor -> signal ids) of every actor we hid
+        // for it: its own (if hidden by hand) and its helper windows.
+        this._hiddenActors = new Map();
         // groupId -> sequence number of when it last left the stage. Mutter
         // pushes minimized windows to the back of its MRU list, so the
         // sidebar order (most recently parked on top) has to be kept here.
@@ -116,8 +124,7 @@ export class StageManager {
             w.connect('unmanaged', () => {
                 ids.forEach(id => w.disconnect(id));
                 this._windowSignals.delete(w);
-                this._parked.delete(w);
-                this._hidden.delete(w); // its actors are gone with it
+                this._forgetParked(w);
                 this._groupOf.delete(w);
                 this._queueRefresh();
             }),
@@ -127,6 +134,8 @@ export class StageManager {
                 w.disconnect(shownId);
                 ids.splice(ids.indexOf(shownId), 1);
                 this._makeRoomFor(w);
+                // It may be a helper window of a parked window.
+                this._queueRefresh();
             });
             ids.push(shownId);
         }
@@ -206,61 +215,96 @@ export class StageManager {
             // Makes the minimize animation fly into the sidebar.
             w.set_icon_geometry(target);
             w.minimize();
-            return;
+        } else {
+            // Some windows (e.g. the Android emulator) drop the minimize
+            // function through _MOTIF_WM_HINTS, and Mutter refuses to
+            // minimize them. Hide their actors instead; hidden actors also
+            // take no input.
+            this._hidden.add(w);
+            this._queueRefresh();
         }
-        // Some windows (e.g. the Android emulator) drop the minimize function
-        // through _MOTIF_WM_HINTS, and Mutter refuses to minimize them. Hide
-        // their actors instead; hidden actors also take no input.
-        this._hideActors(w);
-        this._queueRefresh();
+        this._hideAttached(w);
+    }
+
+    // A parked window went away: drop it without restoring or animating it,
+    // but bring back the helper windows we hid on its behalf.
+    _forgetParked(w) {
+        this._parked.delete(w);
+        this._hidden.delete(w);
+        const own = w.get_compositor_private();
+        const watched = this._hiddenActors.get(w);
+        if (own && watched?.has(own)) {
+            watched.get(own).forEach(id => own.disconnect(id));
+            watched.delete(own);
+        }
+        this._showAttached(w);
     }
 
     _unpark(w) {
         this._parked.delete(w);
-        if (this._hidden.has(w)) {
-            this._showActors(w);
+        this._showAttached(w);
+        if (this._hidden.delete(w))
             this._queueRefresh();
-        } else if (w.minimized) {
+        else if (w.minimized)
             w.unminimize();
-        }
     }
 
-    // Covers the window's transients too (the emulator's side toolbar),
-    // which Mutter would otherwise hide along with a minimized parent.
+    // Windows that have to disappear along with a parked window. Mutter
+    // hides real transients of minimized windows itself, but not helper
+    // windows whose WM_TRANSIENT_FOR it rejected: the emulator's side
+    // toolbar is one ("Invalid WM_TRANSIENT_FOR window ... specified").
+    _attachedWindows(w) {
+        const hiddenByHand = this._hidden.has(w);
+        const pid = w.get_pid();
+        const app = this._appOf(w);
+        const sameClient = other => pid > 0 ? other.get_pid() === pid : this._appOf(other) === app;
+        // Helpers stay with the app's window that is on stage, if any.
+        const helpersElsewhere = this._stageWindows().some(sameClient);
+        return global.display.list_all_windows().filter(other => {
+            if (other === w)
+                return hiddenByHand;
+            if (other.find_root_ancestor() === w)
+                return hiddenByHand;
+            return !helpersElsewhere && sameClient(other) &&
+                HELPER_TYPES.includes(other.get_window_type()) &&
+                !other.get_transient_for() && !other.is_above() &&
+                !other.is_on_all_workspaces();
+        });
+    }
+
     // GNOME shows window actors again on its own (e.g. after a workspace
     // switch), so each one is watched and hidden again before it is drawn.
-    _hideActors(w) {
-        const windows = [w];
-        w.foreach_transient(t => {
-            windows.push(t);
-            return true;
-        });
-        const watched = [];
-        for (const win of windows) {
+    // Helper windows can also be re-created while parked; _refresh() calls
+    // this again to catch them.
+    _hideAttached(w) {
+        const watched = this._hiddenActors.get(w) ?? new Map();
+        for (const win of this._attachedWindows(w)) {
             const actor = win.get_compositor_private();
-            if (!actor)
+            if (!actor || watched.has(actor))
                 continue;
             actor.hide();
-            const id = actor.connect('notify::visible', () => {
-                if (!actor.visible)
-                    return;
-                global.compositor.get_laters().add(Meta.LaterType.BEFORE_REDRAW, () => {
-                    if (this._hidden.has(w))
-                        actor.hide();
-                    return GLib.SOURCE_REMOVE;
-                });
-            });
-            watched.push([actor, id]);
+            watched.set(actor, [
+                actor.connect('notify::visible', () => {
+                    if (!actor.visible)
+                        return;
+                    global.compositor.get_laters().add(Meta.LaterType.BEFORE_REDRAW, () => {
+                        if (this._hiddenActors.get(w)?.has(actor))
+                            actor.hide();
+                        return GLib.SOURCE_REMOVE;
+                    });
+                }),
+                actor.connect('destroy', () => watched.delete(actor)),
+            ]);
         }
-        this._hidden.set(w, watched);
+        this._hiddenActors.set(w, watched);
     }
 
-    _showActors(w) {
-        for (const [actor, id] of this._hidden.get(w) ?? []) {
-            actor.disconnect(id);
+    _showAttached(w) {
+        for (const [actor, ids] of this._hiddenActors.get(w) ?? []) {
+            ids.forEach(id => actor.disconnect(id));
             actor.show();
         }
-        this._hidden.delete(w);
+        this._hiddenActors.delete(w);
     }
 
     // Like macOS, new windows open beside the sidebar rather than under it.
@@ -278,6 +322,8 @@ export class StageManager {
     }
 
     _refresh() {
+        for (const w of this._parked)
+            this._hideAttached(w);
         this._sidebar.setGroups(this._parkedGroups());
         this._sidebar.updateVisibility(this._stageWindows());
     }

@@ -17,7 +17,7 @@ The window group you are working with stays in the middle of the screen. Every o
 - **Out of the way.** The strip hides while a window covers it or comes close to it. Touch the left screen edge with the pointer to bring it back.
 - **Room for new windows.** Newly opened windows are placed beside the strip instead of under it. Windows you moved yourself are never moved.
 - **Optional previews.** Turn the strip off and keep only the window parking, from Quick Settings or the extension settings.
-- **Works with stubborn windows.** Some windows refuse to be minimized, such as the Android Emulator, which removes the minimize function through `_MOTIF_WM_HINTS`. These are hidden instead, so they don't show up on every stage.
+- **Works with stubborn windows.** Some windows refuse to be minimized, such as the Android Emulator, which removes the minimize function through `_MOTIF_WM_HINTS`. These are hidden instead, together with their tool windows (like the emulator's side toolbar), so they don't show up on every stage.
 - Turning Stage Manager off brings every parked window back.
 
 ## Usage
